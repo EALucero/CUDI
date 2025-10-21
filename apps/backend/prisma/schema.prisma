@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql" // o "mysql" o "sqlite" según tu caso
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -24,27 +24,33 @@ model Student {
   birthDate     DateTime
   institutionId String
   isActive      Boolean  @default(true)
-  enrollments   Enrollment[]
+
+  institution Institution  @relation(fields: [institutionId], references: [id])
+  enrollments Enrollment[]
 }
 
 model Teacher {
-  id            String   @id @default(uuid())
+  id            String  @id @default(uuid())
   name          String
-  email         String   @unique
+  email         String  @unique
   institutionId String
-  isActive      Boolean  @default(true)
-  courses       Course[]
+  isActive      Boolean @default(true)
+
+  institution Institution @relation(fields: [institutionId], references: [id])
+  courses     Course[]
 }
 
 model Course {
-  id            String   @id @default(uuid())
+  id            String  @id @default(uuid())
   name          String
   description   String
   institutionId String
   teacherId     String
-  isActive      Boolean  @default(true)
-  teacher       Teacher  @relation(fields: [teacherId], references: [id])
-  enrollments   Enrollment[]
+  isActive      Boolean @default(true)
+
+  institution Institution  @relation(fields: [institutionId], references: [id])
+  teacher     Teacher      @relation(fields: [teacherId], references: [id])
+  enrollments Enrollment[]
 }
 
 model Enrollment {
@@ -54,6 +60,19 @@ model Enrollment {
   enrolledAt DateTime @default(now())
   status     String
 
-  student    Student  @relation(fields: [studentId], references: [id])
-  course     Course   @relation(fields: [courseId], references: [id])
+  student Student @relation(fields: [studentId], references: [id])
+  course  Course  @relation(fields: [courseId], references: [id])
+}
+
+model Institution {
+  id       String  @id @default(uuid())
+  name     String
+  address  String
+  email    String  @unique
+  phone    String
+  isActive Boolean @default(true)
+
+  students Student[]
+  teachers Teacher[]
+  courses  Course[]
 }
