@@ -1,9 +1,59 @@
+datasource db {
+  provider = "postgresql" // o "mysql" o "sqlite" según tu caso
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
 model User {
   id           String   @id @default(uuid())
   name         String
   email        String   @unique
   passwordHash String
-  role         String   @default("student")
+  role         String
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
+}
+
+model Student {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  birthDate     DateTime
+  institutionId String
+  isActive      Boolean  @default(true)
+  enrollments   Enrollment[]
+}
+
+model Teacher {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  institutionId String
+  isActive      Boolean  @default(true)
+  courses       Course[]
+}
+
+model Course {
+  id            String   @id @default(uuid())
+  name          String
+  description   String
+  institutionId String
+  teacherId     String
+  isActive      Boolean  @default(true)
+  teacher       Teacher  @relation(fields: [teacherId], references: [id])
+  enrollments   Enrollment[]
+}
+
+model Enrollment {
+  id         String   @id @default(uuid())
+  studentId  String
+  courseId   String
+  enrolledAt DateTime @default(now())
+  status     String
+
+  student    Student  @relation(fields: [studentId], references: [id])
+  course     Course   @relation(fields: [courseId], references: [id])
 }
