@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { RegisterUser } from '../RegisterUser'
-import { User } from '../../entities/User'
-import { UserRepository } from '../../repositories/UserRepository'
+import { RegisterUser } from '../../RegisterUser'
+import { User } from '../../../entities/User'
+import { UserRepository } from '../../../repositories/UserRepository'
 
 class InMemoryUserRepo implements UserRepository {
   private users: User[] = []
