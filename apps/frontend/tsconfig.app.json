@@ -8,6 +8,18 @@
     "types": ["vite/client"],
     "skipLibCheck": true,
 
+    "baseUrl": ".",
+    "paths": {
+      "@domain/*": ["../../domain/src/*"],
+      "@backend/*": ["../../backend/src/*"],
+      "@components/*": ["src/components/*"],
+      "@views/*": ["src/views/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@services/*": ["src/services/*"],
+      "@types/*": ["src/types/*"],
+      "@helpers/*": ["src/helpers/*"]
+    },
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -24,5 +36,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "../../../../../Teoria/3-StoryBook/1-AuthPrueVisual/src/components/button.stories.tsx", "../../../../../Teoria/3-StoryBook/1-AuthPrueVisual/src/components/button.tsx"]
+  "include": ["src"]
 }

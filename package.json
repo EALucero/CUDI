@@ -3,7 +3,8 @@
   "private": true,
   "workspaces": [
     "domain",
-    "apps/backend"
+    "apps/backend",
+    "apps/frontend"
   ],
   "packageManager": "yarn@4.10.3",
   "devDependencies": {
