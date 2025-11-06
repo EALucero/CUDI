@@ -1,22 +1,17 @@
 import { Student } from '@domain/entities/Student'
+import { http } from '@services/http'
 
-export async function getStudents(): Promise<Student[]> {
-  await new Promise((r) => setTimeout(r, 500))
-  return [
-    new Student(
-      'stu-001',
-      'Lucía Fernández',
-      'lucia@blockchain.edu',
-      new Date('2000-05-12'),
-      'inst-1'
-    ),
-    new Student(
-      'stu-002',
-      'Carlos Gómez',
-      'carlos@cripto.org',
-      new Date('1998-11-03'),
-      'inst-1',
-      false
-    ),
-  ]
+export async function getCourses(): Promise<Student[]> {
+  const data = await http<Student[]>('/students')
+  return data.map(
+    (s) =>
+      new Student(
+        s.id,
+        s.name,
+        s.email,
+        s.birthDate,
+        s.institutionId,
+        s.isActive
+      )
+  )
 }
