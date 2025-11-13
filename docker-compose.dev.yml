@@ -3,44 +3,46 @@ version: '3.9'
 services:
   postgres:
     image: postgres:16-alpine
-    restart: always
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_DB: S{DB_NAME}
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      test: ["CMD-SHELL", "pg_isready -U $$DB_USER"]
       interval: 30s
       timeout: 10s
       retries: 5
-    restart: unless-stopped
+
   backend:
     build:
       context: .
-      dockerfile: apps/backend/Dockerfile
-    image: backend:latest
-    env_file: .env
+      dockerfile: apps/backend/dockerfile-back
     ports:
       - "8080:3000"
     volumes:
-      - backend-storage:/app/apps/backend/storage
+      - ./apps/backend:/app/apps/backend
+      - ./packages/domain:/app/packages/domain
     depends_on:
       postgres:
         condition: service_healthy
-      
+    environment:
+      DATABASE_URL: ${DB_URL}
+
   frontend:
     build:
       context: .
-      dockerfile: apps/frontend/Dockerfile
-    image: frontend:latest
-    env_file: .env
+      dockerfile: apps/frontend/dockerfile-front
     ports:
       - "8081:5173"
+    volumes:
+      - ./apps/frontend:/app/apps/frontend
+      - ./packages/domain:/app/packages/domain
+    depends_on:
+      - backend
 
 volumes:
   pgdata:
-  backend-storage:

@@ -6,6 +6,4 @@ COPY . .
 
 RUN yarn install --frozen-lockfile
 
-EXPOSE 3000
-
-CMD ["yarn", "workspace", "backend", "start"]
+CMD ["yarn", "workspace", "backend", "dev"]
