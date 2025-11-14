@@ -1,16 +1,19 @@
 import { CourseRepository } from '../repositories/CourseRepository'
 import { Course } from '../entities/Course'
 import { v4 as uuid } from 'uuid'
+import { UseCase } from '../types/UseCase'
 
-export class CreateCourse {
-  constructor(private repo: CourseRepository) {}
+type Payload = {
+  name: string
+  description: string
+  institutionId: string
+  teacherId: string
+}
 
-  async execute(data: {
-    name: string
-    description: string
-    institutionId: string
-    teacherId: string
-  }): Promise<Course> {
+export class CreateCourse implements UseCase<Payload, Course, { courseRepo: CourseRepository }> {
+  deps!: { courseRepo: CourseRepository }
+
+  async execute(data: Payload): Promise<Course> {
     const course = new Course(
       uuid(),
       data.name,
@@ -18,7 +21,7 @@ export class CreateCourse {
       data.institutionId,
       data.teacherId
     )
-    await this.repo.save(course)
-    return course
+
+    return await this.deps.courseRepo.create(course)    
   }
 }

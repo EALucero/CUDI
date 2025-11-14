@@ -1,9 +1,14 @@
 import { InstitutionRepository } from '../repositories/InstitutionRepository'
+import { UseCase } from '../types/UseCase'
 
-export class DeleteInstitution {
-  constructor(private repo: InstitutionRepository) {}
+type Payload = {
+  id: string
+}
 
-  async execute(id: string): Promise<void> {
-    await this.repo.delete(id)
+export class DeleteInstitution implements UseCase<Payload, void, { institutionRepo: InstitutionRepository }> {
+  deps!: { institutionRepo: InstitutionRepository }
+
+  async execute({ id }: Payload): Promise<void> {
+    await this.deps.institutionRepo.delete(id)
   }
 }

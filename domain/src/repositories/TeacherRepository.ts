@@ -1,6 +1,7 @@
 import { Teacher } from '../entities/Teacher'
 
 export interface TeacherRepository {
+  create(enrollment: Teacher): Promise<Teacher>
   findById(id: string): Promise<Teacher | null>
   findAll(): Promise<Teacher[]>
   save(teacher: Teacher): Promise<void>

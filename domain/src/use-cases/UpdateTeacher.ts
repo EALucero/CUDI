@@ -1,25 +1,26 @@
 import { TeacherRepository } from '../repositories/TeacherRepository'
 import { Teacher } from '../entities/Teacher'
+import { UseCase } from '../types/UseCase'
 
-export class UpdateTeacher {
-  constructor(private repo: TeacherRepository) {}
+type Payload = {
+  id: string
+  data: Partial<{
+    name: string
+    email: string
+    institutionId: string
+    isActive: boolean
+  }>
+}
 
-  async execute(data: {
-    id: string
-    name?: string
-    email?: string
-    institutionId?: string
-    isActive?: boolean
-  }): Promise<Teacher> {
-    const teacher = await this.repo.findById(data.id)
+export class UpdateTeacher implements UseCase<Payload, Teacher, { teacherRepo: TeacherRepository }> {
+  deps!: { teacherRepo: TeacherRepository }
+
+  async execute({ id, data }: Payload): Promise<Teacher> {
+    const teacher = await this.deps.teacherRepo.findById(id)
     if (!teacher) throw new Error('Teacher not found')
 
-    teacher.name = data.name ?? teacher.name
-    teacher.email = data.email ?? teacher.email
-    teacher.institutionId = data.institutionId ?? teacher.institutionId
-    teacher.isActive = data.isActive ?? teacher.isActive
-
-    await this.repo.update(teacher)
+    Object.assign(teacher, data)
+    await this.deps.teacherRepo.save(teacher)
     return teacher
   }
 }

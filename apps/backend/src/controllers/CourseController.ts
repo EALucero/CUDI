@@ -1,54 +1,47 @@
 import { Request, Response } from 'express'
-import { prisma } from '../lib/prisma'
+import { dispatchUseCase } from '../../core/dispatchUseCase'
+import { CreateCourseDTO } from '../dtos/CreateCourseDTO'
+import { UpdateCourseDTO } from '../dtos/UpdateCourseDTO'
 
 export const CourseController = {
   async getAll(req: Request, res: Response) {
-    const courses = await prisma.course.findMany()
+    const courses = await dispatchUseCase('course.getAll', undefined)
     res.json(courses)
   },
 
   async getById(req: Request, res: Response) {
     const { id } = req.params
-    const course = await prisma.course.findUnique({ where: { id } })
+    const course = await dispatchUseCase('course.getById', id)
     if (!course) return res.status(404).json({ error: 'Curso no encontrado' })
     res.json(course)
   },
 
   async create(req: Request, res: Response) {
-    const { name, description, institutionId, teacherId, isActive } = req.body
-    if (!name || !institutionId || !teacherId) {
-      return res.status(400).json({ error: 'Faltan campos obligatorios' })
+    try {
+      const dto = CreateCourseDTO.parse(req.body)
+      const course = await dispatchUseCase('course.create', dto)
+      res.status(201).json(course)
+    } catch (err: any) {
+      res.status(400).json({ error: err.message })
     }
-
-    const course = await prisma.course.create({
-      data: { name, description, institutionId, teacherId, isActive },
-    })
-
-    res.status(201).json(course)
   },
 
   async update(req: Request, res: Response) {
-    const { id } = req.params
-    const { name, description, institutionId, teacherId, isActive } = req.body
-
     try {
-      const course = await prisma.course.update({
-        where: { id },
-        data: { name, description, institutionId, teacherId, isActive },
-      })
+      const dto = UpdateCourseDTO.parse({ id: req.params.id, ...req.body })
+      const course = await dispatchUseCase('course.update', dto)
       res.json(course)
-    } catch (error) {
-      res.status(404).json({ error: 'Curso no encontrado' })
+    } catch (err: any) {
+      res.status(404).json({ error: err.message })
     }
   },
 
   async delete(req: Request, res: Response) {
-    const { id } = req.params
     try {
-      await prisma.course.delete({ where: { id } })
+      await dispatchUseCase('course.delete', { id: req.params.id })
       res.status(204).send()
-    } catch (error) {
-      res.status(404).json({ error: 'Curso no encontrado' })
+    } catch (err: any) {
+      res.status(404).json({ error: err.message })
     }
   },
 }

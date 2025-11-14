@@ -1,10 +1,11 @@
 import { TeacherRepository } from '../repositories/TeacherRepository'
 import { Teacher } from '../entities/Teacher'
+import { UseCase } from '../types/UseCase'
 
-export class GetTeacherById {
-  constructor(private repo: TeacherRepository) {}
+export class GetTeacherById implements UseCase<string, Teacher | null, { teacherRepo: TeacherRepository }> {
+  deps!: { teacherRepo: TeacherRepository }
 
   async execute(id: string): Promise<Teacher | null> {
-    return await this.repo.findById(id)
+    return await this.deps.teacherRepo.findById(id)
   }
 }

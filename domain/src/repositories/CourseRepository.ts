@@ -1,6 +1,7 @@
 import { Course } from '../entities/Course'
 
 export interface CourseRepository {
+  create(enrollment: Course): Promise<Course>
   findById(id: string): Promise<Course | null>
   findAll(): Promise<Course[]>
   save(course: Course): Promise<void>

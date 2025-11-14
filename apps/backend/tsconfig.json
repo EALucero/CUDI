@@ -1,11 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./src",
-    "paths": {
-      "@cudi/domain/*": ["../../domain/src/*"],
-      "@cudi/backend/*": ["./*"]
-    }
+
   },
   "include": ["src"]
 }

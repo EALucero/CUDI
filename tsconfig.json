@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "rootDir": ".",
     "outDir": "dist",
     "forceConsistentCasingInFileNames": true,
@@ -11,8 +11,9 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@cudi/domain/*": ["domain/src/*"],
-      "@cudi/backend/*": ["apps/backend/src/*"]
+      "@domain/*": ["domain/src/*"],
+      "@cudi/backend/*": ["apps/backend/src/*"],
+      "@cudi/frontend/*": ["apps/frontend/src/*"]
     }
   },
   "exclude": ["node_modules", "dist"]

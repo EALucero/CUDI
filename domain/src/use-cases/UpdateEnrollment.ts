@@ -1,18 +1,26 @@
 import { EnrollmentRepository } from '../repositories/EnrollmentRepository'
 import { Enrollment } from '../entities/Enrollment'
+import { UseCase } from '../types/UseCase'
 
-export class UpdateEnrollment {
-  constructor(private repo: EnrollmentRepository) {}
+type Payload = {
+  id: string
+  data: Partial<{
+    studentId: string,
+    courseId: string,
+    enrolledAt: Date,
+    status: 'active' | 'withdrawn' | 'completed'
+  }>
+}
 
-  async execute(data: {
-    id: string
-    status?: 'active' | 'withdrawn' | 'completed'
-  }): Promise<Enrollment> {
-    const enrollment = await this.repo.findById(data.id)
+export class UpdateEnrollment implements UseCase<Payload, Enrollment, { enrollmentRepo: EnrollmentRepository }> {
+  deps!: { enrollmentRepo: EnrollmentRepository }
+
+  async execute({ id, data }: Payload): Promise<Enrollment> {
+    const enrollment = await this.deps.enrollmentRepo.findById(id)
     if (!enrollment) throw new Error('Enrollment not found')
 
-    enrollment.status = data.status ?? enrollment.status
-    await this.repo.update(enrollment)
+    Object.assign(enrollment, data)
+    await this.deps.enrollmentRepo.save(enrollment)
     return enrollment
   }
 }
